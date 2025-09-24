@@ -1,28 +1,33 @@
+// initiate as global vars
 let player1 = "";
 let player2 = "";
 
+// html elements
 const playerNamesArea = document.querySelector(".player-names-area");
 const startGameButton = document.querySelector("#button-start");
 const resetGameButton = document.querySelector("#button-reset");
 const gameBoardElement = document.querySelector(".game-board");
 const instructionElement = document.querySelector(".game-text-area");
+const boardButtons = document.querySelector(".game-board");
 
+// start button click event
 startGameButton.addEventListener("click", (e)=>{
     const name1 = document.querySelector("#player1-name").value
     const name2 = document.querySelector("#player2-name").value
-
+    
     player1 = player(name1);
     player2 = player(name2);
-
+    
     playerNamesArea.style.display = "none";
     startGameButton.style.display = "none";
     resetGameButton.style.display = "block";
     gameBoardElement.style.display = "grid"
-
+    
     game.setTurn(player1);
     instructionElement.textContent = `${player1.name}'s turn`
 })
 
+// reset button click event
 resetGameButton.addEventListener("click", (e)=>{
     game.setMarker("X");
     game.setTurn(player1);
@@ -33,14 +38,18 @@ resetGameButton.addEventListener("click", (e)=>{
     instructionElement.textContent = `${game.getTurn().name}'s turn`
 })
 
-// -------------------------------------------------------
-const boardButtons = document.querySelector(".game-board");
+// -main logic-
+// board grid events 
 boardButtons.addEventListener("click", (e)=>{
+    // in case user clicks the grid borders which is possible
     if (!e.target.classList.contains("box")) {
         console.log("missed box div");
         return;
     };
+    // button id is same as board indexes
     const id = e.target.id;
+
+    // make sure the grid place doesn't already have a marker
     if (!game.isValidMove(id)){
         console.log("not valid move, try again");
         return;
@@ -48,11 +57,16 @@ boardButtons.addEventListener("click", (e)=>{
 
     console.log("chosen id:", e.target.id, "current marker:", game.getMarker());
 
+    // set marker to board
     gameboard.board[id] = game.getMarker();
+    
+    // set marker to DOM
     e.target.textContent = game.getMarker();
 
     gameboard.printBoard();
 
+    // check the win/end game condition
+    // declare winner or keep playing
     const currentPlayerState = game.checkForWinner();
     if (currentPlayerState){
         console.log("Game over, winner", currentPlayerState.name);
@@ -64,7 +78,7 @@ boardButtons.addEventListener("click", (e)=>{
 })
 // ----------------------
 
-
+// IIFE, gameboard management
 const gameboard = (function () {
     let board = ['','','','','','','','',''];
     const printBoard = () => {
@@ -82,7 +96,7 @@ const gameboard = (function () {
 })();
 
 
-
+// IIFE, main game methods
 const game = (function () {
     let turn = player1
     let marker = "X";
@@ -91,6 +105,7 @@ const game = (function () {
         return gameboard.board[id] ? false : true;
     };
 
+    // switch whose turn it is
     const toggleTurn = function () {
         console.log("turn:",turn)
         console.log("player1:",player1)
@@ -111,6 +126,7 @@ const game = (function () {
     const setTurn = (x) => turn = x;
     const setMarker = (x) => marker = x;
 
+    // winning condition check
     const checkForWinner = function () {
         const row1 = new Set ([gameboard.board[0], gameboard.board[1], gameboard.board[2]]);
         const row2 = new Set ([gameboard.board[3], gameboard.board[4], gameboard.board[5]]);
@@ -141,22 +157,9 @@ const game = (function () {
     return { getTurn, getMarker, setTurn, setMarker, toggleTurn, isValidMove, checkForWinner };
 })();
 
+// player object factory function
 function player(name) {
     return {
         name: name
     };
 }
-
-
-// gameboard.printBoard()
-
-// let id = 3;
-// console.log(game.isValidMove(id));
-// gameboard.board[id] = game.getMarker();
-// gameboard.printBoard();
-// console.log(game.checkForWinner());
-// game.toggleTurn();
-
-// console.log("NEXT TURN--------------");
-
-
