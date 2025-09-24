@@ -1,13 +1,37 @@
 const name1 = "A";
 const name2 = "B";
 
-const player1 = player(name1)
-const player2 = player(name2)
+const player1 = player(name1);
+const player2 = player(name2);
+
+const boardButtons = document.querySelector(".game-board");
+boardButtons.addEventListener("click", (e)=>{
+    if (!e.target.classList.contains("box")) {
+        console.log("missed box div");
+        return;
+    };
+    const id = e.target.id;
+    if (!game.isValidMove(id)){
+        console.log("not valid move, try again");
+        return;
+    };
+
+    console.log("chosen id:", e.target.id);
+
+    gameboard.board[id] = game.getMarker();
+    gameboard.printBoard();
+
+    const currentPlayerState = game.checkForWinner();
+    if (currentPlayerState){
+        console.log("Game over, winner", currentPlayerState.name);
+    };
+    game.toggleTurn();
+})
 // ----------------------
 
 
 const gameboard = (function () {
-    const board = ['','','','','','','','',''] //new Array(9);
+    const board = ['','','','','','','','',''];
     const printBoard = () => {
         console.log(board[0], board[1], board[2])
         console.log(board[3], board[4], board[5])
@@ -28,19 +52,13 @@ const game = (function () {
     };
 
     const toggleTurn = function () {
-        console.log("turn at beginning", turn);
-        console.log("marker at beginning", marker);
         if (turn === player1) {
-            console.log("here");
             turn = player2;
-            marker = "O"
+            marker = "O";
         } else {
-            console.log("in else");
             turn = player1;
-            marker = "X"
+            marker = "X";
         };
-        console.log("turn at end", turn);
-        console.log("marker at end", marker);
     };
 
     const getTurn = () => turn;
@@ -56,7 +74,7 @@ const game = (function () {
         const col3 = new Set ([gameboard.board[2], gameboard.board[5], gameboard.board[8]]);
 
         const diag1 = new Set ([gameboard.board[0], gameboard.board[4], gameboard.board[8]]);
-        const diag2 = new Set ([gameboard.board[2], gameboard.board[4], gameboard.board[7]]);
+        const diag2 = new Set ([gameboard.board[2], gameboard.board[4], gameboard.board[6]]);
 
         const possibilityArr = [row1, row2, row3, col1, col2, col3, diag1, diag2];
 
@@ -84,15 +102,15 @@ function player(name) {
 }
 
 
-gameboard.printBoard()
+// gameboard.printBoard()
 
-let id = 3;
-console.log(game.isValidMove(id));
-gameboard.board[id] = game.getMarker();
-gameboard.printBoard();
-console.log(game.checkForWinner());
-game.toggleTurn();
+// let id = 3;
+// console.log(game.isValidMove(id));
+// gameboard.board[id] = game.getMarker();
+// gameboard.printBoard();
+// console.log(game.checkForWinner());
+// game.toggleTurn();
 
-console.log("NEXT TURN--------------");
+// console.log("NEXT TURN--------------");
 
 
