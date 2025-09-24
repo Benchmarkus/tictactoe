@@ -17,6 +17,8 @@ const gameboard = (function () {
     return { board, printBoard };
 })();
 
+
+
 const game = (function () {
     let turn = player1
     let marker = "X";
@@ -44,7 +46,35 @@ const game = (function () {
     const getTurn = () => turn;
     const getMarker = () => marker;
 
-    return { getTurn, getMarker, toggleTurn, isValidMove };
+    const checkForWinner = function () {
+        const row1 = new Set ([gameboard.board[0], gameboard.board[1], gameboard.board[2]]);
+        const row2 = new Set ([gameboard.board[3], gameboard.board[4], gameboard.board[5]]);
+        const row3 = new Set ([gameboard.board[6], gameboard.board[7], gameboard.board[8]]);
+        
+        const col1 = new Set ([gameboard.board[0], gameboard.board[3], gameboard.board[6]]);
+        const col2 = new Set ([gameboard.board[1], gameboard.board[4], gameboard.board[7]]);
+        const col3 = new Set ([gameboard.board[2], gameboard.board[5], gameboard.board[8]]);
+
+        const diag1 = new Set ([gameboard.board[0], gameboard.board[4], gameboard.board[8]]);
+        const diag2 = new Set ([gameboard.board[2], gameboard.board[4], gameboard.board[7]]);
+
+        const possibilityArr = [row1, row2, row3, col1, col2, col3, diag1, diag2];
+
+        for (const s of possibilityArr) {
+            if (s.size === 1) {
+                if (s.has("X")) {
+                    return player1;
+                }
+                if (s.has("O")) {
+                    return player2;
+                }
+            }
+        }
+        return undefined;
+        
+    };
+
+    return { getTurn, getMarker, toggleTurn, isValidMove, checkForWinner };
 })();
 
 function player(name) {
@@ -56,23 +86,13 @@ function player(name) {
 
 gameboard.printBoard()
 
-let id = 0;
+let id = 3;
 console.log(game.isValidMove(id));
 gameboard.board[id] = game.getMarker();
 gameboard.printBoard();
+console.log(game.checkForWinner());
 game.toggleTurn();
 
 console.log("NEXT TURN--------------");
 
-id = 4;
-console.log(game.isValidMove(id));
-gameboard.board[id] = game.getMarker();
-gameboard.printBoard();
-game.toggleTurn();
 
-console.log("NEXT TURN--------------");
-id = 2;
-console.log(game.isValidMove(id));
-gameboard.board[id] = game.getMarker();
-gameboard.printBoard();
-game.toggleTurn();
